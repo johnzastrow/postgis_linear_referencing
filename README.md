@@ -74,4 +74,7 @@ POSTGIS="3.2.1 5fae8e5" [EXTENSION] PGSQL="130" GEOS="3.10.2-CAPI-1.16.0" PROJ="
  Observation points would typically be collected by GPS in the field, but could be digitized as shown above.
 
 ![Outputs and negative fixes](static/negative_meas_fix.png)
-The screen above shows many important elemets. 
+The screen above shows many important elements. 
+
+![Example Products](static/example_ref.png)
+The screen above shows some example products. Notice the slight asymmetry in the measures on either side of the event point. 
