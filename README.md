@@ -58,11 +58,8 @@ The process snaps the points to the nearest line (because it's impossible to col
 
 ### TESTING
 
-Developed using QGIS 3.26 and Postgresql/PostGIS as below.
-
-
- * Ubuntu 22.04
- 
+ * Developed using QGIS 3.26 and Postgresql/PostGIS as below.
+ * On Ubuntu 22.04 and Windows
  * output from SELECT PostGIS_full_version ();
 
 ```
@@ -71,10 +68,10 @@ POSTGIS="3.2.1 5fae8e5" [EXTENSION] PGSQL="130" GEOS="3.10.2-CAPI-1.16.0" PROJ="
 ### IMAGES
 
 ![Observation Points](/static/obs_points.png)
- Observation points would typically be collected by GPS in the field, but could be digitized as shown above.
+ #### Observation points would typically be collected by GPS in the field, but could be digitized as shown above.
 
 ![Outputs and negative fixes](static/negative_meas_fix.png)
-The screen above shows many important elements. 
+#### The screen above shows many important elements. 
 
 ![Example Products](static/example_ref.png)
-The screen above shows some example products. Notice the slight asymmetry in the measures on either side of the event point. 
+#### The screen above shows some example products. Notice the slight asymmetry in the measures on either side of the event point. 
