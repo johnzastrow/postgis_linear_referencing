@@ -20,7 +20,7 @@ So, inputs here are
  
 Adjust the fields in the SQL to match your inputs.
 
-```
+```sql
 CREATE TABLE IF NOT EXISTS greatpond.obs
 (
     id serial,
