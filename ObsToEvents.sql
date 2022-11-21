@@ -12,7 +12,7 @@ METHODS and REFERENCE:
 -- Need an observation table. In this case all work is being done in the schema called 'greatpond' 
 -- so references are prefixed with that schema.
 
-BEGIN;
+
 CREATE TABLE IF NOT EXISTS greatpond.obs
 (
     id serial,
@@ -31,11 +31,6 @@ COMMENT ON TABLE greatpond.obs
 	-- Add a spatial column to the table
 	-- AddGeometryColumn(varchar schema_name, varchar table_name, 
 	-- 		varchar column_name, integer srid, varchar type, integer dimension, boolean use_typmod=true);
-SELECT AddGeometryColumn ('greatpond','obs','geom',6348,'POINT',2); -- EPSG:6348 - NAD83(2011) / UTM zone 19N
-	
-	CREATE INDEX obs_geom_idx
-  ON greatpond.obs2
-  USING GIST (geom);
 
 SELECT AddGeometryColumn ('greatpond','obs','geom',6348,'POINT',2); -- EPSG:6348 - NAD83(2011) / UTM zone 19N
 	
@@ -43,7 +38,7 @@ SELECT AddGeometryColumn ('greatpond','obs','geom',6348,'POINT',2); -- EPSG:6348
   ON greatpond.obs
   USING GIST (geom);
 
-END;
+
 
 
 
@@ -112,7 +107,10 @@ update greatpond.events SET
 	upper_meas = meas_per_m * upper_m -- this field did not update the first time so process as second step
 ;
 
--- force measures to be between 0 and 1
+-- force measures to be between 0 and 1, because a negative distance doesn't make sense. 
+-- This script is then sensitive to observations being placed near the end of line segments...
+-- and therefore short segments. Consider dissolving (merging) segments that end at places
+-- other than intersections with other segments in the same layer.
 update greatpond.events SET
 	lower_meas = 0 where lower_meas < 0;
 update greatpond.events SET
