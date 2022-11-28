@@ -106,7 +106,10 @@ update greatpond.events SET
 	upper_meas = meas_per_m * upper_m -- this field did not update the first time so process as second step
 ;
 
--- force measures to be between 0 and 1
+-- force measures to be between 0 and 1, because a negative distance doesn't make sense. 
+-- This script is then sensitive to observations being placed near the end of line segments...
+-- and therefore short segments. Consider dissolving (merging) segments that end at places
+-- other than intersections with other segments in the same layer.
 update greatpond.events SET
 	lower_meas = 0 where lower_meas < 0;
 update greatpond.events SET
