@@ -12,14 +12,14 @@ METHODS and REFERENCE:
 -- Need an observation table. In this case all work is being done in the schema called 'greatpond' 
 -- so references are prefixed with that schema.
 
-BEGIN;
+
 CREATE TABLE IF NOT EXISTS greatpond.obs
 (
     id serial,
     name character varying(50),
     "desc" character varying(250),
     severity_int integer,
-    size_m numeric NOT NULL,
+    size numeric NOT NULL,
 --    geom geometry, -- we will load this field with POINTs, not MULTIPOINTs
     PRIMARY KEY (id)
 );
@@ -27,15 +27,9 @@ CREATE TABLE IF NOT EXISTS greatpond.obs
 COMMENT ON TABLE greatpond.obs
     IS 'Field observations';
 	
-		
 	-- Add a spatial column to the table
 	-- AddGeometryColumn(varchar schema_name, varchar table_name, 
 	-- 		varchar column_name, integer srid, varchar type, integer dimension, boolean use_typmod=true);
-SELECT AddGeometryColumn ('greatpond','obs','geom',6348,'POINT',2); -- EPSG:6348 - NAD83(2011) / UTM zone 19N
-	
-	CREATE INDEX obs_geom_idx
-  ON greatpond.obs2
-  USING GIST (geom);
 
 SELECT AddGeometryColumn ('greatpond','obs','geom',6348,'POINT',2); -- EPSG:6348 - NAD83(2011) / UTM zone 19N
 	
@@ -43,7 +37,7 @@ SELECT AddGeometryColumn ('greatpond','obs','geom',6348,'POINT',2); -- EPSG:6348
   ON greatpond.obs
   USING GIST (geom);
 
-END;
+
 
 
 
@@ -65,15 +59,15 @@ SELECT
   ST_GeometryN(greatpond.trails.geom,1) AS trails_geom, -- Reads in geom. Return the 1-based Nth element geometry of an input geometry.
   greatpond.trails.fid AS trails_fid,
   greatpond.trails.osm_id AS trails_osm_id,
-  ST_LENGTH(greatpond.trails.geom) AS trail_length_m ,
+  ST_LENGTH(greatpond.trails.geom) AS trail_length ,
   greatpond.obs.geom AS obs_geom,
-  greatpond.obs.size_m AS obs_size_m,
+  greatpond.obs.size AS obs_size,
   greatpond.obs.id AS obs_id,
-  ST_Distance(greatpond.trails.geom, greatpond.obs.geom) AS dist_to_trail_m
+  ST_Distance(greatpond.trails.geom, greatpond.obs.geom) AS dist_to_trail
 FROM greatpond.trails
   JOIN greatpond.obs
   ON ST_DWithin(greatpond.trails.geom, greatpond.obs.geom, 200) -- Returns true if the geometries are within a given distance, in this case 200m
-ORDER BY obs_id, dist_to_trail_m ASC
+ORDER BY obs_id, dist_to_trail ASC
 )
 -- We use the 'distinct on' PostgreSQL feature to get the first
 -- trail (the nearest) for each unique trail fid. We can then
@@ -84,11 +78,11 @@ SELECT
   obs_id,
   trails_fid,
   trails_osm_id,
-  trail_length_m,
-  obs_size_m,
+  trail_length,
+  obs_size,
   ST_LineLocatePoint(trails_geom, obs_geom) AS measure,
-  ST_LineLocatePoint(trails_geom, obs_geom) * trail_length_m AS meas_length,
-  dist_to_trail_m
+  ST_LineLocatePoint(trails_geom, obs_geom) * trail_length AS meas_length,
+  dist_to_trail
 FROM ordered_nearest;
 
 -- Step 1a. Update the table with some more value
@@ -104,8 +98,8 @@ ALTER TABLE greatpond.events
 
 update greatpond.events SET
 	meas_per_m = measure / meas_length,
-	lower_m = meas_length - (obs_size_m/2),
-	upper_m = meas_length + (obs_size_m/2);
+	lower_m = meas_length - (obs_size/2),
+	upper_m = meas_length + (obs_size/2);
 	
 update greatpond.events SET
 	lower_meas = meas_per_m * lower_m,
@@ -132,11 +126,11 @@ SELECT
   obs_id,
   trails_fid,
   trails_osm_id,
-  trail_length_m,
+  trail_length,
   measure,
   meas_length,
-  obs_size_m,
-  dist_to_trail_m,
+  obs_size,
+  dist_to_trail,
   meas_per_m,
   lower_m ,
   upper_m,
