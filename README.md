@@ -2,6 +2,8 @@
 
 Example SQL to demonstrate some linear referencing concepts using only PostGIS/Postgres. 
 
+I wrote about this effort in a blog post [here](https://johnzastrow.github.io/2023-02-02-linear-references-in-postgis/)
+
 ### Motivation
 The goals is to demonstrate linear referencing and perform all processing, after collection of the initial observation file, in PostGIS alone. Next steps might be to enable some or all of this process to be dynamic so that event_points and segments would automatically adjust if the line layer is edited -- one of the beatiful aspects of linear referencing versus just creating features.
 
